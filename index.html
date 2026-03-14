@@ -1,0 +1,2518 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RK Training Centre™</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --primary: #FF6B35; /* vibrant orange */
+            --secondary: #2563EB; /* bright blue */
+            --accent: #FFD700; /* yellow */
+            --light: #fef9f2; /* light warm */
+            --white: #ffffff;
+            --dark: #1f2a44; /* deep midnight text */
+            --gray: #667085;
+            --soft: #f7f8ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+            
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f0f0f0;
+            color: var(--dark);
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Loading screen */
+        #loadingOverlay {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            color: #000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease;
+        }
+
+        #loadingOverlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-stage {
+            text-align: center;
+        }
+
+        .logo-assembler {
+            position: relative;
+            width: 280px;
+            height: 280px;
+        }
+
+        .logo-fragment {
+            position: absolute;
+            width: 25%;
+            height: 25%;
+            background-image: url('images/rktraningphoto.jpg');
+            background-size: 400% 400%;
+            opacity: 0;
+            transition: transform 0.7s cubic-bezier(0.22, 0.86, 0.42, 0.99), opacity 0.7s ease;
+        }
+
+        .logo-fragment.assembled {
+            opacity: 1;
+            transform: translate(0,0) scale(1);
+        }
+
+        .loader-text {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .loader-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .loader-text h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            color: #1f2a44;
+            font-weight: 800;
+        }
+
+        .loader-text p {
+            font-size: 1rem;
+            color: #475569;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: linear-gradient(135deg, #FF6B35 0%, #2563EB 100%);
+            padding: 10px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 6px 28px rgba(255, 107, 53, 0.35);
+            transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
+            backdrop-filter: blur(6px);
+        }
+
+        header.header-hidden {
+            transform: translateY(-110%);
+        }
+
+        header.header-scrolled {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb) !important;
+            opacity: 1 !important;
+            backdrop-filter: none !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+            border-bottom: 1px solid rgba(37, 99, 235, 0.35);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-text h1 {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+        .logo-text p {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.65rem;
+        }
+
+        .logo img {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        nav a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .hamburger-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 1.6rem;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #2563EB;
+            z-index: 1001;
+            flex-direction: column;
+        }
+
+        .mobile-menu.open {
+            display: flex;
+        }
+
+        .mobile-menu a,
+        .mobile-menu button {
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: left;
+            font-weight: 600;
+            width: 100%;
+            background: transparent;
+            border: none;
+        }
+
+        .mobile-menu a:hover,
+        .mobile-menu button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 12px 16px;
+            }
+
+            .logo img {
+                width: 40px;
+                height: 40px;
+                object-fit: cover;
+            }
+
+            .logo-text h1 {
+                font-size: 1rem;
+            }
+
+            .logo-text p {
+                display: none;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .hamburger-btn {
+                display: block;
+            }
+        }
+
+        .login-btn {
+            color: white;
+            background: rgba(59, 130, 246, 0.85);
+            padding: 8px 18px;
+            border-radius: 30px;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            background: rgba(37, 99, 235, 0.95);
+        }
+
+        nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 420px;
+            width: 90%;
+            padding: 24px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #f1f5f9;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .modal h2 {
+            margin-bottom: 18px;
+            color: #0f172a;
+        }
+
+        .modal button,
+        .modal input {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .login-option-btn {
+            width: 100%;
+            margin-bottom: 12px;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            font-size: 0.95rem;
+            cursor: pointer;
+            font-weight: 600;
+            background: white;
+        }
+
+        .login-option-btn.google {
+            color: #ef4444;
+            border-color: #fecaca;
+        }
+
+        .login-option-btn.mobile {
+            color: #2563eb;
+            border-color: #93c5fd;
+        }
+
+        .mobile-login-panel {
+            margin-top: 14px;
+            display: none;
+        }
+
+        .mobile-login-panel.active {
+            display: block;
+        }
+
+        .mobile-login-panel input {
+            width: 100%;
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1px solid #cbd5e1;
+            margin-bottom: 10px;
+            outline: none;
+        }
+
+        .mobile-login-panel .otp-inputs {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .mobile-login-panel .otp-inputs input {
+            width: 20%;
+            text-align: center;
+            font-size: 1.1rem;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid #cbd5e1;
+        }
+
+        .send-otp-btn {
+            width: 100%;
+            background: #2563eb;
+            border: none;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 10px;
+            margin-top: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 90vh;
+            background: radial-gradient(circle at top left, rgba(255, 107, 53, 0.22), transparent 45%),
+                        linear-gradient(135deg, #FFE5B4 0%, #FF6B35 35%, #2563EB 100%);
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(37, 99, 235, 0.08), transparent);
+            top: -100px;
+            right: -100px;
+            border-radius: 50%;
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(14, 165, 233, 0.08), transparent);
+            bottom: -80px;
+            left: -80px;
+            border-radius: 50%;
+            animation: pulse 4s 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            border: 2px solid #bfdbfe;
+            color: var(--primary);
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.1);
+            animation: fadeDown 0.6s ease both;
+        }
+
+        .hero h2 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            color: var(--dark);
+            margin-bottom: 20px;
+            animation: fadeUp 0.7s 0.2s ease both;
+        }
+
+        .hero h2 span {
+            color: var(--primary);
+        }
+
+        .hero p {
+            color: var(--gray);
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 36px;
+            animation: fadeUp 0.7s 0.3s ease both;
+        }
+
+        .hero-btns {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            animation: fadeUp 0.7s 0.4s ease both;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #FF6B35, #FF933C);
+            color: white;
+            padding: 14px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 10px 32px rgba(255, 107, 53, 0.44), 0 0 16px rgba(255, 214, 0, 0.3);
+            transition: all 0.3s;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 16px 38px rgba(255, 107, 53, 0.55), 0 0 20px rgba(255, 214, 0, 0.35);
+        }
+
+        .btn-outline {
+            border: 2px solid #2563EB;
+            color: #2563EB;
+            padding: 14px 32px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s;
+            display: inline-block;
+            background: white;
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.24);
+        }
+
+        .btn-outline:hover {
+            background: #2563EB;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 26px rgba(37, 99, 235, 0.35);
+        }
+
+        /* ===== STATS ===== */
+        .stats {
+            background: white;
+            padding: 40px 48px;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            width: 100%;
+            margin: 0;
+            box-sizing: border-box;
+            gap: 24px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.06);
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 24px;
+            border-radius: 16px;
+            background: white;
+            border-top: 6px solid #FF6B35;
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.1);
+        }
+
+        .stat-card .icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .num {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+
+        .stat-card .label {
+            font-size: 0.85rem;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        /* ===== COURSES ===== */
+        .courses {
+            padding: 80px 48px;
+            background: linear-gradient(180deg, #fef9f2 0%, #f6f9ff 100%);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 56px;
+        }
+
+        .section-title .tag {
+            display: inline-block;
+            background: #dbeafe;
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 6px 18px;
+            border-radius: 30px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-title h2 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
+        .section-title h2 span {
+            color: var(--primary);
+        }
+
+        .section-title p {
+            color: var(--gray);
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 28px;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            border-top: 6px solid #FF6B35;
+            border: 1px solid rgba(37, 99, 235, 0.24);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.35s;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .gallery-card {
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            background: #fff;
+            position: relative;
+        }
+
+        .gallery-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            transition: 0.3s;
+        }
+
+        .gallery-caption {
+            background: #e8f4ff;
+            padding: 10px 12px;
+            border-radius: 12px;
+            margin-top: 8px;
+            font-size: 0.88rem;
+            color: #1f2a44;
+        }
+
+        .gallery-caption strong {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .gallery-caption .caption-text {
+            color: #344054;
+            line-height: 1.4;
+        }
+
+        .course-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .course-card:hover {
+            transform: translateY(-8px) rotateX(2deg);
+            box-shadow: 0 24px 50px rgba(37, 99, 235, 0.15);
+            border-color: #bfdbfe;
+        }
+
+        .course-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, #dbeafe, #e0f2fe);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
+        }
+
+        .course-card h3 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .course-card p {
+            color: var(--gray);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .course-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .duration {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 600;
+            background: #dbeafe;
+            padding: 4px 14px;
+            border-radius: 20px;
+        }
+
+        .enroll-link {
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-decoration: none;
+        }
+
+        .enroll-link:hover {
+            text-decoration: underline;
+        }
+
+        /* ===== 3D FLOATING ICONS ===== */
+        .floating-section {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af, #0369a1);
+            padding: 80px 48px;
+            text-align: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .floating-section h2 {
+            color: white;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 48px;
+        }
+
+        .floating-section h2 span {
+            color: #93c5fd;
+        }
+
+        .icons-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 32px;
+        }
+
+        .float-icon {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .float-icon .box {
+            width: 90px;
+            height: 90px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.6rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .float-icon:nth-child(2) .box {
+            animation-delay: 0.3s;
+        }
+
+        .float-icon:nth-child(3) .box {
+            animation-delay: 0.6s;
+        }
+
+        .float-icon:nth-child(4) .box {
+            animation-delay: 0.9s;
+        }
+
+        .float-icon:nth-child(5) .box {
+            animation-delay: 1.2s;
+        }
+
+        .float-icon:nth-child(6) .box {
+            animation-delay: 1.5s;
+        }
+
+        .float-icon:nth-child(7) .box {
+            animation-delay: 1.8s;
+        }
+
+        .float-icon:nth-child(8) .box {
+            animation-delay: 2.1s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotateY(0deg);
+            }
+
+            50% {
+                transform: translateY(-12px) rotateY(10deg);
+            }
+        }
+
+        .float-icon .box:hover {
+            transform: scale(1.15) rotateY(15deg) !important;
+            background: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .float-icon span {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* ===== WHY US ===== */
+        .why {
+            padding: 80px 48px;
+            background: linear-gradient(180deg, #ffffff 0%, #fff7e8 100%);
+        }
+
+        .why-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 24px;
+        }
+
+        /* ===== ABOUT US SECTION ===== */
+        #about {
+            padding: 80px 48px;
+            background: linear-gradient(180deg, #eaf4ff 0%, #ffffff 45%, #eaf4ff 100%);
+        }
+
+        #about .section-title h2 {
+            color: #1f2a44;
+        }
+
+        .about-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+            margin-top: 28px;
+        }
+
+        .about-card {
+            background: white;
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-top: 4px solid #2563EB;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 10px 24px rgba(37, 99, 235, 0.1);
+        }
+
+        .about-card h3 {
+            margin-top: 12px;
+            color: #1f2a44;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .about-card p {
+            color: #4f5d77;
+            line-height: 1.7;
+            margin-top: 10px;
+        }
+
+        .team-section {
+            margin-top: 48px;
+        }
+
+        .team-section h3 {
+            font-size: 1.8rem;
+            color: #1f2a44;
+            margin-bottom: 22px;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .team-card {
+            background: #f0f7ff;
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            border-radius: 18px;
+            padding: 22px;
+            text-align: center;
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.1);
+        }
+
+        .team-card img {
+            width: 110px;
+            height: 110px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 14px;
+            border: 3px solid #2563EB;
+        }
+
+        .team-card h4 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #1f2a44;
+            margin-bottom: 6px;
+        }
+
+        .team-card .role {
+            color: #2563EB;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .team-card p {
+            color: #4f5d77;
+            line-height: 1.6;
+        }
+
+        @media (max-width: 900px) {
+            .about-cards,
+            .team-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .why-card {
+            background: white;
+            border-top: 6px solid #FF6B35;
+            border: 1px solid rgba(37, 99, 235, 0.24);
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .why-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.1);
+            background: white;
+        }
+
+        .why-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .why-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: var(--white);
+            margin-bottom: 10px;
+        }
+
+        .why-card p {
+            color: var(--gray);
+            font-size: 0.88rem;
+            line-height: 1.7;
+        }
+
+        /* ===== REVIEWS ===== */
+        .reviews {
+            padding: 80px 48px;
+            background: #f0f9ff;
+        }
+
+        .reviews-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .review-card {
+            background: white;
+            border-top: 6px solid #2563EB;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(37, 99, 235, 0.2);
+            transition: all 0.3s;
+        }
+
+        .review-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(37, 99, 235, 0.1);
+        }
+
+        .stars {
+            color: #f59e0b;
+            font-size: 1.1rem;
+            margin-bottom: 14px;
+        }
+
+        .review-card p {
+            color: #fbf9f9;
+            font-size: 0.92rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .reviewer {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .avatar {
+            width: 46px;
+            height: 46px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: white;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .reviewer-info .name {
+            font-weight: 700;
+            color: var(--dark);
+            font-size: 0.92rem;
+        }
+
+        .reviewer-info .role {
+            color: var(--gray);
+            font-size: 0.8rem;
+        }
+
+        /* ===== CONTACT ===== */
+        .contact {
+            padding: 80px 48px;
+            background: linear-gradient(180deg, #ffffff 0%, #eaf6ff 100%);
+            background: white;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: start;
+        }
+
+        .contact-info h3 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .contact-info .sub {
+            color: var(--gray);
+            margin-bottom: 32px;
+            font-size: 0.95rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .contact-item .ci {
+            width: 46px;
+            height: 46px;
+            background: #dbeafe;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .contact-item .ct .label {
+            font-size: 0.78rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+
+        .contact-item .ct .value {
+            font-weight: 600;
+            color: var(--whate);
+            font-size: 0.95rem;
+            margin-top: 2px;
+        }
+
+        .rating-box {
+            background: linear-gradient(135deg, #dbeafe, #e0f2fe);
+            border-radius: 16px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .rating-box .big-num {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .rating-box .stars {
+            color: #f59e0b;
+            font-size: 1.3rem;
+            margin-bottom: 4px;
+        }
+
+        .rating-box p {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .contact-form input,
+        .contact-form select,
+        .contact-form textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e0f2fe;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.92rem;
+            color: var(--dark);
+            background: var(--light);
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .contact-form input:focus,
+        .contact-form select:focus,
+        .contact-form textarea:focus {
+            border-color: var(--primary);
+            background: white;
+        }
+
+        .contact-form textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .contact-form button {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .contact-form button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: linear-gradient(135deg, #1e3a8a, #1e40af);
+            color: rgba(255, 255, 255, 0.7);
+            text-align: center;
+            padding: 40px 48px;
+        }
+
+        footer .fl {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 6px;
+        }
+
+        footer .fl span {
+            color: #93c5fd;
+        }
+
+        footer p {
+            font-size: 0.88rem;
+        }
+
+        footer .links {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        footer .links a {
+            color: rgba(255, 255, 255, 0.5);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+
+        footer .links a:hover {
+            color: #93c5fd;
+        }
+
+        footer .copy {
+            margin-top: 20px;
+            font-size: 0.78rem;
+            color: rgba(255, 255, 255, 0.3);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 20px;
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== FLOATING ACTION BUTTONS ===== */
+        .floating-actions {
+            position: fixed;
+            right: 16px;
+            bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 12px;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .floating-actions a,
+        .floating-actions button {
+            pointer-events: auto;
+        }
+
+        .floating-action-btn {
+            min-width: 52px;
+            min-height: 52px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            color: #ffffff;
+            text-decoration: none;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.25);
+            border: 2px solid transparent;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            background: #2563eb;
+            line-height: 1;
+        }
+
+        .floating-action-btn.whatsapp-button {
+            background: #25d366;
+        }
+
+        .floating-action-btn.call-button {
+            background: #2563eb;
+        }
+
+        .floating-action-btn.ai-chat-button {
+            background: #7C3AED;
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .floating-action-btn:hover,
+        .floating-action-btn:focus-visible {
+            transform: translateY(-2px) scale(1.06);
+            box-shadow: 0 16px 30px rgba(0, 0, 0, 0.35);
+            outline: none;
+        }
+
+        /* AI Chat Window */
+        .ai-chat-window {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 320px;
+            height: 480px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            z-index: 99999;
+        }
+
+        .ai-chat-window.active {
+            display: flex;
+        }
+
+        .ai-chat-header {
+            background: #7C3AED;
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-weight: 700;
+        }
+
+        .ai-chat-header .close-btn {
+            background: transparent;
+            border: none;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.25rem;
+            cursor: pointer;
+        }
+
+        .ai-chat-body {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            background: #f7f7ff;
+        }
+
+        .ai-message {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 18px;
+            line-height: 1.4;
+            font-size: 0.9rem;
+            word-break: break-word;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .ai-message.user {
+            align-self: flex-end;
+            background: #7C3AED;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .ai-message.bot {
+            align-self: flex-start;
+            background: white;
+            border-bottom-left-radius: 4px;
+        }
+
+        .ai-typing {
+            width: 36px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 4px;
+        }
+
+        .ai-typing span {
+            width: 8px;
+            height: 8px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 50%;
+            animation: blink 1.2s ease-in-out infinite;
+        }
+
+        .ai-typing span:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .ai-typing span:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes blink {
+            0%, 80%, 100% { opacity: 0.2; }
+            40% { opacity: 1; }
+        }
+
+        .ai-chat-input {
+            display: flex;
+            gap: 10px;
+            padding: 12px;
+            background: #ffffff;
+            border-top: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        .ai-chat-input input {
+            flex: 1;
+            padding: 10px 12px;
+            border-radius: 999px;
+            border: 1px solid rgba(0, 0, 0, 0.15);
+            outline: none;
+            font-size: 0.95rem;
+        }
+
+        .ai-chat-input button {
+            border: none;
+            background: #7C3AED;
+            color: white;
+            padding: 10px 14px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        .ai-chat-input button:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        @media (max-width: 768px) {
+            .ai-chat-window {
+                width: calc(100% - 32px);
+                right: 16px;
+                bottom: 80px;
+                height: 420px;
+            }
+        }
+
+        .floating-action-btn:focus-visible {
+            border-color: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.5), 0 16px 30px rgba(0, 0, 0, 0.35);
+        }
+
+        @media (max-width: 768px) {
+            .floating-actions {
+                right: 12px;
+                bottom: 12px;
+                gap: 10px;
+            }
+
+            .floating-action-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 1.1rem;
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            header {
+                position: fixed;
+                padding: 12px 16px;
+                flex-direction: column;
+                gap: 12px;
+                left: 0;
+                right: 0;
+                top: 0;
+                z-index: 1000;
+            }
+
+            body {
+                padding-top: 88px;
+            }
+
+            .hero {
+                padding-top: 120px;
+            }
+
+            .hero h2 {
+                font-size: 2.2rem;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+                padding: 40px 24px;
+            }
+
+            .courses,
+            .why,
+            .reviews,
+            .contact,
+            .floating-section {
+                padding: 60px 24px;
+            }
+
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero h2 {
+                font-size: 1.8rem;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        .lightbox-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(18, 28, 56, 0.88);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            padding: 16px;
+        }
+
+        .lightbox-overlay.active {
+            display: flex;
+        }
+
+        .lightbox-container {
+            position: relative;
+            max-width: 96vw;
+            max-height: 94vh;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 4px solid #FFD700;
+            background: #fff;
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.45);
+        }
+
+        .lightbox-container img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            display: block;
+            max-height: 94vh;
+        }
+
+        .lightbox-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: none;
+            background: rgba(255, 255, 255, 0.95);
+            color: #1f2a44;
+            font-size: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Payment Section Mobile Responsive */
+        @media (max-width: 768px) {
+            #payment {
+                padding: 60px 16px;
+            }
+
+            #payment h2 {
+                font-size: 2rem;
+            }
+
+            #payment p {
+                font-size: 1rem;
+            }
+
+            .payment-cards {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .payment-card {
+                padding: 20px;
+            }
+
+            .payment-card img {
+                width: 150px;
+                height: 150px;
+            }
+        }
+    </style>
+    <script src="https://cdn.vapi.ai/vapi.js"></script>
+</head>
+
+<body>
+    <div id="loadingOverlay">
+        <div class="loader-stage">
+            <div class="logo-assembler" id="logoAssembler"></div>
+            <div class="loader-text" id="loaderText">
+                <h1>RK Training Centre<sup style="font-size:0.6em; vertical-align: super; line-height: 0;">™</sup></h1>
+                <p>Bihar's Top Computer Institute</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo">
+            <img src="images/rktraningphoto.jpg"
+                style="width:52px; height:52px; border-radius:12px; object-fit:cover;">
+            <div class="logo-text">
+                <h1>RK Training Centre<sup style="font-size:0.6em; vertical-align: super; line-height: 0;">™</sup></h1>
+                <p>Pandaul, Madhubani, Bihar • Est. 2010</p>
+            </div>
+        </div>
+        <nav>
+            <a href="#courses">Courses</a>
+            <a href="#skills">Skills</a>
+            <a href="about.html">About</a>
+            <a href="#why">Why Us</a>
+            <a href="#reviews">Reviews</a>
+            <a href="#contact">Contact</a>
+            <a href="#payment">Payment</a>
+            <a href="blog.html">Blog</a>
+            <a href="certification.html">Our Certification</a>
+            <a href="other-classes.html">Other Classes</a>
+            <button id="loginBtn" class="login-btn" type="button">Login</button>
+        </nav>
+        <button id="hamburgerBtn" class="hamburger-btn" aria-label="Toggle menu" type="button">☰</button>
+        <div id="mobileMenu" class="mobile-menu" aria-label="Mobile navigation menu">
+            <a href="#courses">Courses</a>
+            <a href="#skills">Skills</a>
+            <a href="about.html">About</a>
+            <a href="#why">Why Us</a>
+            <a href="#reviews">Reviews</a>
+            <a href="#contact">Contact</a>
+            <a href="blog.html">Blog</a>
+            <a href="certification.html">Our Certification</a>
+            <a href="other-classes.html">Other Classes</a>
+            <button class="login-btn" type="button" id="mobileMenuLoginBtn">Login</button>
+        </div>
+    </header>
+
+    <div id="loginModalOverlay" class="modal-overlay" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="loginModalTitle">
+            <button type="button" class="modal-close" id="modalCloseBtn">×</button>
+            <h2 id="loginModalTitle">Login</h2>
+            <button type="button" class="login-option-btn google" id="googleLoginBtn">▶ Login with Google</button>
+            <button type="button" class="login-option-btn mobile" id="mobileLoginBtn">📱 Login with Mobile Number</button>
+            <div class="mobile-login-panel" id="mobileLoginPanel">
+                <input type="tel" id="mobileNumber" placeholder="Enter mobile number" maxlength="10" />
+                <button type="button" class="send-otp-btn" id="sendOtpBtn">Send OTP</button>
+                <div class="otp-inputs" id="otpInputs" style="display:none;">
+                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" />
+                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" />
+                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" />
+                    <input type="text" maxlength="1" inputmode="numeric" pattern="[0-9]*" />
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero" id="heroSection">
+        <div class="hero-content">
+            <div class="hero-badge">⭐ Google Rating 4.9 • 81 Reviews</div>
+            <h2>Start Your Career From Here!</h2>
+            <p>Computer, Tally, GST, Accounting and digital marketing — Start Your Career From Here.</p>
+
+            <div class="hero-btns">
+                <a href="#contact" class="btn-primary">🎓 Free Demo Class</a>
+                <a href="#courses" class="btn-outline">📚 Courses Dekhein</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS -->
+    <div class="stats">
+        <div class="stat-card">
+            <div class="icon">👨‍🎓</div>
+            <div class="num">5000+</div>
+            <div class="label">Placed</div>
+        </div>
+        <div class="stat-card">
+            <div class="icon">⭐</div>
+            <div class="num">4.9</div>
+            <div class="label">Google Rating</div>
+        </div>
+        <div class="stat-card">
+            <div class="icon">📅</div>
+            <div class="num">15+</div>
+            <div class="label">Years Experience</div>
+        </div>
+        <div class="stat-card">
+            <div class="icon">💼</div>
+            <div class="num">95%</div>
+            <div class="label">Placement Rate</div>
+        </div>
+    </div>
+
+    <!-- COURSES -->
+    <section class="courses" id="courses">
+        <div class="section-title">
+            <div class="tag">📚 Our Courses</div>
+            <h2>Professional <span>Courses</span></h2>
+            <p>Job-oriented courses with practical training</p>
+        </div>
+        <div class="courses-grid">
+            <div class="course-card">
+                <div class="course-icon">💻</div>
+                <h3>DCA — Diploma in Computer</h3>
+                <p>Computer basics se lekar advanced skills tak — MS Office, Internet, aur professional tools.</p>
+                <div class="course-meta">
+                    <span class="duration">⏱ 6 Months</span>
+                    <a href="#contact" class="enroll-link">Enroll →</a>
+                </div>
+            </div>
+            <div class="course-card">
+                <div class="course-icon">📊</div>
+                <h3>Tally Prime & Accounting</h3>
+                <p>Tally ERP, GST filing, vouchers, balance sheet — complete practical accounting training.</p>
+                <div class="course-meta">
+                    <span class="duration">⏱ 12 Months</span>
+                    <a href="#contact" class="enroll-link">Enroll →</a>
+                </div>
+            </div>
+            <div class="course-card">
+                <div class="course-icon">🧾</div>
+                <h3>GST & Tax Filing</h3>
+                <p>GST registration, returns, e-filing, ITR — complete tax knowledge for jobs & business.</p>
+                <div class="course-meta">
+                    <span class="duration">⏱ 2 Months</span>
+                    <a href="#contact" class="enroll-link">Enroll →</a>
+                </div>
+            </div>
+            <div class="course-card">
+                <div class="course-icon">📈</div>
+                <h3>Digital Marketing </h3>
+                <p>instagram+facebook meda ads run keyword research on page SEO</p>
+                <div class="course-meta">
+                    <span class="duration">⏱ 6 Months</span>
+                    <a href="#contact" class="enroll-link">Enroll →</a>
+                </div>
+            </div>
+            <div class="course-card">
+                <div class="course-icon">🖥️</div>
+                <h3>MS Office & Excel</h3>
+                <p>Word, Excel, PowerPoint — advanced formulas, MIS reports aur data entry skills.</p>
+                <div class="course-meta">
+                    <span class="duration">⏱ 2 Months</span>
+                    <a href="#contact" class="enroll-link">Enroll →</a>
+                </div>
+            </div>
+         </div>
+    </section>
+
+    <!-- 3D FLOATING SKILLS -->
+    <section class="floating-section" id="skills">
+        <h2>Yahan Yeh Sab <span>Seekhein</span></h2>
+        <div class="icons-grid">
+            <div class="float-icon">
+                <div class="box">💻</div>
+                <span>Computer</span>
+            </div>
+            <div class="float-icon">
+                <div class="box">📊</div>
+                <span>Tally</span>
+            </div>
+            <div class="float-icon">
+                <div class="box">🧾</div>
+                <span>GST</span>
+            </div>
+            <div class="float-icon">
+                <div class="box">📝</div>
+                <span>MS Office</span>
+            </div>
+            <div class="float-icon">
+                <div class="box">🏦</div>
+                <span>Banking</span>
+            </div>
+            <div class="float-icon">
+                <div class="box">📱</div>
+                <span>Digital</span>
+            </div>
+            <div class="float-icon">
+                <div class="box">🎨</div>
+                <span>Design</span>
+            </div>
+            <div class="float-icon">
+                <div class="box">📈</div> 
+                <span>Accounting</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- WHY US -->
+    <section class="why" id="why">
+        <div class="section-title">
+            <div class="tag">🌟 Why Learn From Us</div>
+            <h2>Why RK Training Centre is the Best?</h2>
+            <p>Pandaul, Madhubani's #1 Training Institute</p>
+        </div>
+        <div class="why-grid">
+            <div class="why-card">
+                <span class="icon">👨‍🏫</span>
+                <h3>Expert Trainer</h3>
+                <p>Rafi Ahmad Sir — experienced practical accounting trainer with 15+ years.</p>
+            </div>
+            <div class="why-card">
+                <span class="icon">🖥️</span>
+                <h3>Modern Lab</h3>
+                <p>Fully-equipped computer lab with latest computers and updated software.</p>
+            </div>
+            <div class="why-card">
+                <span class="icon">📜</span>
+                <h3>Certificate</h3>
+                <p>Government-recognized certificate useful for every job.</p>
+            </div>
+            <div class="why-card">
+                <span class="icon">💼</span>
+                <h3>Job Support</h3>
+                <p>Full support for placement and interview preparation after the course.</p>
+            </div>
+            <div class="why-card">
+                <span class="icon">🕐</span>
+                <h3>Flexible Batch</h3>
+                <p>Morning, day, and evening batches — choose according to your convenience.</p>
+            </div>
+            <div class="why-card">
+                <span class="icon">💰</span>
+                <h3>Affordable Fees</h3>
+                <p>Best quality education at low fees. Installment facility also available.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT US PREVIEW -->
+    <section class="why" id="about" style="padding: 80px 48px;">
+        <div class="section-title">
+            <div class="tag">👥 About Us</div>
+            <h2>About <span>RK Training Centre</span></h2>
+            <p>Learning with passion, growth and strong career support.</p>
+        </div>
+        <div style="text-align: center; margin-top: 40px;">
+            <a href="about.html" class="btn-primary">Learn More About Us</a>
+        </div>
+    </section>
+
+    <!-- REVIEWS -->
+    <section class="reviews" id="reviews">
+        <div class="section-title">
+            <div class="tag">   Google Reviews</div>
+            <h2>🔍 Students <span>Kya Kehte Hain</span></h2>
+            <p style="font-size:0.9rem; color:#2563eb; margin-top:6px;">⭐ 4.9 Rating on Google Maps • 81 Reviews</p>
+        </div>
+        <div class="reviews-grid">
+            <div class="review-card">
+                <div class="stars">★★★★★</div>
+                <p>"Maine apni professional journey RK Training Centre se shuru ki. Computer aur Tally ki knowledge ne
+                    meri foundation strong banayi. Sirf ek training centre nahi, meri success ka starting point hai!"
+                </p>
+                <div class="reviewer">
+                    <div class="avatar">Z</div>
+                    <div class="reviewer-info">
+                        <div class="name">Zishan Khan</div>
+                        <div class="role">founder and Web & ai application developer frelancer</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card">
+                <div class="stars">★★★★★</div>
+                <p>"Zindagi mein kuch log sirf padhate nahi, balki zindagi ka rasta dikhate hain. Sir se class li toh
+                    sirf knowledge nahi, soch, discipline aur confidence bhi mila."</p>
+                <div class="reviewer">
+                    <div class="avatar">M</div>
+                    <div class="reviewer-info">
+                        <div class="name">Md Sadab Ansari</div>
+                        <div class="role">RK Training Centre Student</div>
+                    </div>
+                </div>
+            </div>
+            <div class="review-card">
+                <div class="stars">★★★★★</div>
+                <p>"Maine yahan se DCA course kiya tha aur ab Maharashtra mein kaam kar raha hoon. RK Training Centre ne
+                    mujhe career ke liye taiyaar kiya. Bahut bahut shukriya!"</p>
+                <div class="reviewer">
+                    <div class="avatar">A</div>
+                    <div class="reviewer-info">
+                        <div class="name">Aakash Jha</div>
+                        <div class="role">DCA Graduate — Maharashtra</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact" id="contact">
+        <div class="section-title">
+            <div class="tag">📞 Call now</div>
+            <h2>Join <span>Now!</span></h2>
+            <p>register free demo class</p>
+        </div>
+        <div class="contact-grid">
+            <div class="contact-info">
+                <h3>Rabbani Khan</h3>
+                <p class="sub">Director — RK Training Centre</p>
+                <div class="contact-item">
+                    <div class="ci">📍</div>
+                    <div class="ct">
+                        <div class="label">Address</div>
+                        <div class="value">Karpuri Chowk, near H.P. Gas Agency,<br />Pandaul, Bihar — 847234</div>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="ci">📞</div>
+                    <div class="ct">
+                        <div class="label">Phone</div>
+                        <div class="value">085210 91235</div>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="ci">🌐</div>
+                    <div class="ct">
+                        <div class="label">Website</div>
+                        <div class="value">rktrainingcentre.com</div>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="ci">🕐</div>
+                    <div class="ct">
+                        <div class="label">Timing</div>
+                        <div class="value">Somvar – Shanivar: 7 AM – 7 PM</div>
+                    </div>
+                </div>
+                <div class="rating-box">
+                    <div class="big-num">4.9</div>
+                    <div>
+                        <div class="stars">★★★★★</div>
+                        <p>81 Google Reviews<br />Pandaul, Bihar ka #1 Centre</p>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <div class="contact-form">
+                    <div class="form-row">
+                        <input type="text" placeholder="Aapka Naam *" />
+                        <input type="tel" placeholder="Mobile Number *" />
+                    </div>
+                    <select>
+                        <option value="" disabled selected>Course Chunein</option>
+                        <option>DCA — Diploma in Computer</option>
+                        <option>Tally Prime & Accounting</option>
+                        <option>GST & Tax Filing</option>
+                    
+                        <option>MS Office & Excel</option>
+                        <option>DTP & Graphic Design</option>
+                        <option>digital marketing</option>
+                    </select>
+                    <select>
+                        <option value="" disabled selected>Batch Timing</option>
+                        <option>Morning (7 AM – 9 AM)</option>
+                        <option>Day (10 AM – 12 PM)</option>
+                        <option>Evening (5 PM – 7 PM)</option>
+                    </select>
+                    <textarea placeholder="Koi sawal ho toh yahan likhein..."></textarea>
+                    <button type="button">🎓 Free Demo Class</button>
+                </div>
+            </div>
+        </div>
+    </section>
+<!-- Placed -->
+<section style="padding:80px 48px; background:#f0f9ff;">
+    <div style="text-align:center; margin-bottom:40px;">
+        <div style="display:inline-block; background:#dbeafe; color:#2563eb; font-size:0.8rem; font-weight:700; padding:6px 18px; border-radius:30px; margin-bottom:12px;">
+            <p>🎓 <b>Placed</b></p>
+        <h2 style="font-size:2.4rem; font-weight:800; color:#1e293b;">Students <span style="color:#2563eb;">Photos</span></h2>
+    </div>
+    <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:20px;">
+        <div class="gallery-card">
+            <img src="images/student1.jpg" alt="Zishan Khan" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <div class="gallery-caption">
+                <strong>Zishan Khan</strong>
+                <div class="caption-text">Freelance Website Developer &amp; AI/Android App Developer - Computer &amp; Tally Batch 2024</div>
+                <div style="font-size:0.75rem;color:#475569;margin-top:4px;">Max 50 words</div>
+            </div>
+        </div>
+        <div class="gallery-card">
+            <img src="images/student2.jpg" alt="Student 2" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <div class="gallery-caption">
+                <strong>Student Name</strong>
+                <div class="caption-text"> (Placeholder text, max 50 words)</div>
+            </div>
+        </div>
+        <div class="gallery-card">
+            <img src="images/student3.jpg" alt="Student 3" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <div class="gallery-caption">
+                <strong>Student Name</strong>
+                <div class="caption-text"> (Placeholder text, max 50 words)</div>
+            </div>
+        </div>
+        <div class="gallery-card">
+            <img src="images/student4.jpg" alt="Student 4" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <div class="gallery-caption">
+                <strong>Student Name</strong>
+                <div class="caption-text"> (Placeholder text, max 50 words)</div>
+            </div>
+        </div>
+        <div class="gallery-card">
+            <img src="images/student5.jpg" alt="Student 5" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <div class="gallery-caption">
+                <strong>Student Name</strong>
+                <div class="caption-text"> (Placeholder text, max 50 words)</div>
+            </div>
+        </div>
+        <div class="gallery-card">
+            <img src="images/student6.jpg" alt="Student 6" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+            <div class="gallery-caption">
+                <strong>Student Name</strong>
+                <div class="caption-text"> (Placeholder text, max 50 words)</div>
+            </div>
+        </div>
+    </div>
+</section>
+    <!-- CERTIFICATION -->
+    <section id="certification" class="contact" style="padding:80px 48px; background: linear-gradient(180deg, #f4f8ff 0%, #ffffff 100%);">
+        <div class="section-title">
+            <div class="tag">🏆 Our Accreditations</div>
+            <h2>Our Accreditations 🏆</h2>
+            <p>Officially Recognized & Authorized Training Centre</p>
+        </div>
+
+        <div class="certification-card" style="max-width:980px; margin: 0 auto; background: #ffffff; border-radius: 18px; box-shadow: 0 14px 35px rgba(37, 99, 235, 0.15); border: 1px solid #e6eefc; padding: 22px;">
+            <div style="display:flex; flex-wrap:wrap; gap:22px; align-items:center; justify-content: center;">
+                <div style="flex:1 1 400px; min-width:320px; text-align:center;">
+                    <a href="images/tally-cert.jpg" class="cert-lightbox-trigger" style="display:block; border: 4px solid #FFD700; border-radius:14px; overflow:hidden;">
+                        <img src="images/tally-cert.jpg" alt="Tally Authorized Training Centre" style="width:100%; height:auto; min-height:320px; object-fit:contain; display:block;" />
+                    </a>
+                </div>
+                <div style="flex:1 1 300px; min-width:260px;">
+                    <h3 style="font-size:1.5rem; color:#1f2a44; margin-bottom:12px;">Tally Authorized Training Centre</h3>
+                    <p style="color:#4f5d77; font-size:1rem; line-height:1.7; margin-bottom:12px;"><strong>Issued by:</strong> Tally Solutions Pvt. Ltd.</p>
+                    <p style="color:#40526f;">Premium certification recognized across the region for practical training excellence. Click the certificate to view full-screen with magnified premium presentation.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PAYMENT SECTION -->
+    <section id="payment" style="background: #f0f7ff; padding: 80px 20px;">
+        <div class="container">
+            <h2 style="text-align: center; font-size: 2.5rem; color: #1f2a44; margin-bottom: 10px;">💳 Online Payment</h2>
+            <p style="text-align: center; font-size: 1.2rem; color: #4f5d77; margin-bottom: 50px;">Pay Course Fees Online — Safe & Secure</p>
+
+            <div class="payment-cards" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto;">
+                <!-- Card 1 - UPI QR Code -->
+                <div class="payment-card" style="background: white; border: 2px solid #2563EB; border-radius: 16px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(37, 99, 235, 0.15);">
+                    <h3 style="font-size: 1.5rem; color: #1f2a44; margin-bottom: 20px;">Scan & Pay</h3>
+                    <img src="images/qr-code.png" alt="QR Code" style="width: 200px; height: 200px; margin: 0 auto 15px; display: block;">
+                    <p style="font-size: 1rem; color: #2563EB; font-weight: 600; margin-bottom: 10px;">UPI ID: 7838185640@paytm</p>
+                    <p style="font-size: 0.9rem; color: #4f5d77;">Scan with any UPI app</p>
+                </div>
+
+                <!-- Card 2 - Accepted Payment Apps -->
+                <div class="payment-card" style="background: white; border: 2px solid #2563EB; border-radius: 16px; padding: 30px; text-align: center; box-shadow: 0 10px 30px rgba(37, 99, 235, 0.15);">
+                    <h3 style="font-size: 1.5rem; color: #1f2a44; margin-bottom: 20px;">We Accept</h3>
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 10px;"><span style="font-size: 1.5rem;">📱</span> PhonePe</div>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 10px;"><span style="font-size: 1.5rem;">💰</span> Google Pay</div>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 10px;"><span style="font-size: 1.5rem;">💳</span> Paytm</div>
+                        <div style="display: flex; align-items: center; justify-content: center; gap: 10px;"><span style="font-size: 1.5rem;">🔄</span> Any UPI App</div>
+                    </div>
+                </div>
+
+                <!-- Card 3 - Instructions -->
+                <div class="payment-card" style="background: white; border: 2px solid #2563EB; border-radius: 16px; padding: 30px; box-shadow: 0 10px 30px rgba(37, 99, 235, 0.15);">
+                    <h3 style="font-size: 1.5rem; color: #1f2a44; margin-bottom: 20px;">Payment Instructions</h3>
+                    <ol style="padding-left: 20px; color: #4f5d77; line-height: 1.8;">
+                        <li>Scan QR Code or use UPI ID</li>
+                        <li>Enter course fee amount</li>
+                        <li>Send payment screenshot on WhatsApp: 7838185640</li>
+                        <li>Receive confirmation within 24 hours</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Important Note Box -->
+            <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 12px; padding: 20px; margin-top: 40px; max-width: 800px; margin-left: auto; margin-right: auto; text-align: center;">
+                <p style="font-size: 1.1rem; color: #92400e; font-weight: 600; margin: 0;">After payment, send screenshot on WhatsApp: 7838185640</p>
+                <p style="font-size: 1rem; color: #92400e; margin-top: 10px;">Your receipt will be delivered within 24 hours</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="fl">RK <span>Training Centre</span></div>
+        <p>Karpuri Chowk, Pandaul, Madhubani, Bihar — 847234</p>
+        <p style="margin-top:4px;">Founded by <strong style="color:#93c5fd;"> Rabbani Khan</strong> | Trainer: Rafi Ahmad
+            Sir</p>
+        <div class="links">
+            <a href="#courses">Courses</a>
+            <a href="#skills">Skills</a>
+            <a href="#why">About</a>
+            <a href="#reviews">Reviews</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <div class="copy">© 2025 RK Training Centre, Pandaul. All Rights Reserved.</div>
+    </footer>
+
+    <div class="floating-actions" aria-label="Quick contact buttons">
+        <button type="button" class="floating-action-btn ai-chat-button" title="Chat with AI Teacher" aria-label="Chat with AI Teacher" style="font-size:24px;">🎓</button>
+        <a href="tel:+917838185640" class="floating-action-btn call-button" title="Call Now" aria-label="Call Now">📞</a>
+        <a href="https://wa.me/917838185640" target="_blank" rel="noopener noreferrer" class="floating-action-btn whatsapp-button" title="Chat on WhatsApp" aria-label="Chat on WhatsApp">💬</a>
+    </div>
+
+    <div class="ai-chat-window" aria-hidden="true" role="dialog" aria-label="AI Teacher Chat">
+        <div class="ai-chat-header">
+            <span>RK AI Teacher 🎓</span>
+            <button type="button" class="close-btn" aria-label="Close chat">×</button>
+        </div>
+        <div class="ai-chat-body" id="aiChatBody">
+            <div class="ai-message bot">
+                Hello! I am RK Training Centre AI Teacher 🎓<br>
+                Ask me anything about our courses!
+            </div>
+        </div>
+        <div class="ai-chat-input">
+            <input id="aiChatInput" type="text" placeholder="Type your question..." autocomplete="off" />
+            <button id="aiChatSend" type="button">Send</button>
+        </div>
+    </div>
+
+    <script>
+        console.log('Page loaded');
+        window.addEventListener('load', function () {
+            const loader = document.getElementById('loadingOverlay');
+            const assembler = document.getElementById('logoAssembler');
+            const loaderText = document.getElementById('loaderText');
+
+            const positions = [
+                { x: -320, y: -320 },
+                { x: window.innerWidth, y: -320 },
+                { x: -320, y: window.innerHeight },
+                { x: window.innerWidth, y: window.innerHeight },
+                { x: window.innerWidth * 0.5 - 140, y: -320 },
+                { x: window.innerWidth * 0.5 - 140, y: window.innerHeight },
+                { x: -320, y: window.innerHeight * 0.5 - 140 },
+                { x: window.innerWidth, y: window.innerHeight * 0.5 - 140 }
+            ];
+
+            for (let row = 0; row < 4; row++) {
+                for (let col = 0; col < 4; col++) {
+                    const fragment = document.createElement('div');
+                    fragment.className = 'logo-fragment';
+                    fragment.style.left = `${col * 25}%`;
+                    fragment.style.top = `${row * 25}%`;
+                    fragment.style.backgroundPosition = `${(col * -100) + '%'} ${(row * -100) + '%'} `;
+                    fragment.style.backgroundSize = '400% 400%';
+
+                    const start = positions[(row * 4 + col) % positions.length];
+                    const jitter = 40;
+                    const random = {
+                        x: start.x + (Math.random() * jitter - jitter / 2),
+                        y: start.y + (Math.random() * jitter - jitter / 2)
+                    };
+
+                    fragment.style.transform = `translate(${random.x}px, ${random.y}px) scale(0.75)`;
+                    assembler.appendChild(fragment);
+
+                    setTimeout(() => {
+                        fragment.classList.add('assembled');
+                        fragment.style.transform = 'translate(0px, 0px) scale(1)';
+                    }, 25);
+                }
+            }
+
+            setTimeout(() => {
+                loaderText.classList.add('visible');
+            }, 750);
+
+            setTimeout(() => {
+                loader.classList.add('hidden');
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 600);
+            }, 2500);
+        });
+
+        const loginBtn = document.getElementById('loginBtn');
+        const modalOverlay = document.getElementById('loginModalOverlay');
+        const closeModalBtn = document.getElementById('modalCloseBtn');
+        const mobileLoginBtn = document.getElementById('mobileLoginBtn');
+        const googleLoginBtn = document.getElementById('googleLoginBtn');
+        const mobileLoginPanel = document.getElementById('mobileLoginPanel');
+        const sendOtpBtn = document.getElementById('sendOtpBtn');
+        const otpInputs = document.getElementById('otpInputs');
+
+        function openModal() {
+            modalOverlay.classList.add('active');
+            modalOverlay.setAttribute('aria-hidden', 'false');
+            mobileLoginPanel.classList.remove('active');
+            otpInputs.style.display = 'none';
+        }
+
+        function closeModal() {
+            modalOverlay.classList.remove('active');
+            modalOverlay.setAttribute('aria-hidden', 'true');
+        }
+
+        loginBtn.addEventListener('click', openModal);
+        closeModalBtn.addEventListener('click', closeModal);
+        modalOverlay.addEventListener('click', function (e) {
+            if (e.target === modalOverlay) closeModal();
+        });
+
+        googleLoginBtn.addEventListener('click', function () {
+            alert('Google login clicked (dummy action)');
+        });
+
+        mobileLoginBtn.addEventListener('click', function () {
+            mobileLoginPanel.classList.add('active');
+            otpInputs.style.display = 'none';
+        });
+
+        sendOtpBtn.addEventListener('click', function () {
+            otpInputs.style.display = 'flex';
+            otpInputs.querySelectorAll('input').forEach(function (el) {
+                el.value = '';
+                el.focus();
+            });
+        });
+
+        otpInputs.querySelectorAll('input').forEach(function (input, idx, inputs) {
+            input.addEventListener('input', function () {
+                if (this.value.length === 1 && idx < inputs.length - 1) {
+                    inputs[idx + 1].focus();
+                }
+            });
+            input.addEventListener('keydown', function (evt) {
+                if (evt.key === 'Backspace' && !this.value && idx > 0) {
+                    inputs[idx - 1].focus();
+                }
+            });
+        });
+
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a, button');
+
+        hamburgerBtn.addEventListener('click', function () {
+            mobileMenu.classList.toggle('open');
+        });
+
+        mobileMenuLinks.forEach(function (link) {
+            link.addEventListener('click', function () {
+                mobileMenu.classList.remove('open');
+            });
+        });
+
+        // Header hide/show on mobile scroll
+        (function () {
+            const header = document.querySelector('header');
+            let lastScrollY = window.pageYOffset;
+            let ticking = false;
+
+            window.addEventListener('scroll', function () {
+                if (!ticking) {
+                    window.requestAnimationFrame(function () {
+                        const currentScrollY = window.pageYOffset;
+
+                        if (currentScrollY > lastScrollY && currentScrollY > 70) {
+                            header.classList.add('header-hidden');
+                        } else {
+                            header.classList.remove('header-hidden');
+                        }
+
+                        if (currentScrollY > 50) {
+                            header.classList.add('header-scrolled');
+                        } else {
+                            header.classList.remove('header-scrolled');
+                        }
+
+                        lastScrollY = currentScrollY;
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }, { passive: true });
+        })();
+
+        // Certification lightbox
+        const lightboxOverlay = document.createElement('div');
+        lightboxOverlay.className = 'lightbox-overlay';
+        lightboxOverlay.innerHTML = `
+            <div class="lightbox-container">
+                <button type="button" class="lightbox-close">×</button>
+                <img src="" alt="Certification Preview" />
+            </div>
+        `;
+        document.body.appendChild(lightboxOverlay);
+
+        const lightboxImage = lightboxOverlay.querySelector('img');
+        const lightboxClose = lightboxOverlay.querySelector('.lightbox-close');
+
+        document.querySelectorAll('.cert-lightbox-trigger').forEach(trigger => {
+            trigger.addEventListener('click', function (event) {
+                event.preventDefault();
+                const src = this.getAttribute('href');
+                lightboxImage.src = src;
+                lightboxOverlay.classList.add('active');
+            });
+        });
+
+        function closeLightbox() {
+            lightboxOverlay.classList.remove('active');
+            lightboxImage.src = '';
+        }
+
+        lightboxClose.addEventListener('click', closeLightbox);
+        lightboxOverlay.addEventListener('click', function (event) {
+            if (event.target === lightboxOverlay) {
+                closeLightbox();
+            }
+        });
+
+        // ===== AI CHAT WINDOW =====
+        const aiChatBtn = document.querySelector('.ai-chat-button');
+        const aiChatWindow = document.querySelector('.ai-chat-window');
+        const aiChatClose = aiChatWindow.querySelector('.close-btn');
+        const aiChatBody = document.getElementById('aiChatBody');
+        const aiChatInput = document.getElementById('aiChatInput');
+        const aiChatSend = document.getElementById('aiChatSend');
+
+        let vapiClient = null;
+        let currentTypingIndicator = null;
+
+        function appendMessage(text, sender) {
+            const msg = document.createElement('div');
+            msg.className = `ai-message ${sender}`;
+            msg.innerHTML = text;
+            aiChatBody.appendChild(msg);
+            aiChatBody.scrollTop = aiChatBody.scrollHeight;
+        }
+
+        function createTypingIndicator() {
+            if (currentTypingIndicator) {
+                currentTypingIndicator.remove();
+            }
+
+            const typing = document.createElement('div');
+            typing.className = 'ai-message bot';
+            typing.innerHTML = `<div class="ai-typing"><span></span><span></span><span></span></div>`;
+            aiChatBody.appendChild(typing);
+            aiChatBody.scrollTop = aiChatBody.scrollHeight;
+            currentTypingIndicator = typing;
+            return typing;
+        }
+
+        async function initVapi() {
+            if (vapiClient) return vapiClient;
+
+            try {
+                const vapi = new Vapi("ba2a9ade-a422-4509-bad4-493085aee908");
+                vapiClient = await vapi.start({
+                    assistantId: "298cd6fc-2ce2-46c4-b9ae-4b2c247042b1"
+                });
+
+                vapiClient.on('message', (event) => {
+                    const payload = event?.text || event?.message || event?.data || event;
+                    if (!payload) return;
+
+                    if (currentTypingIndicator) {
+                        currentTypingIndicator.remove();
+                        currentTypingIndicator = null;
+                    }
+
+                    appendMessage(payload, 'bot');
+                });
+
+                return vapiClient;
+            } catch (err) {
+                console.error('Vapi init failed:', err);
+                return null;
+            }
+        }
+
+        async function sendAiMessage(text) {
+            createTypingIndicator();
+
+            try {
+                const client = await initVapi();
+                if (!client) throw new Error('AI service unavailable');
+
+                await client.send(text);
+            } catch (err) {
+                if (currentTypingIndicator) {
+                    currentTypingIndicator.remove();
+                    currentTypingIndicator = null;
+                }
+
+                console.error('AI send error:', err);
+                appendMessage('Sorry, I am having trouble connecting right now.', 'bot');
+            }
+        }
+
+        const welcomeMessageHtml = `<div class="ai-message bot">Hello! I am RK Training Centre AI Teacher 🎓<br>Ask me anything about our courses!</div>`;
+
+        function showWelcomeMessage() {
+            aiChatBody.innerHTML = welcomeMessageHtml;
+            aiChatBody.scrollTop = aiChatBody.scrollHeight;
+        }
+
+        function toggleAiChat() {
+            const isOpen = aiChatWindow.classList.toggle('active');
+            aiChatWindow.setAttribute('aria-hidden', String(!isOpen));
+
+            if (isOpen) {
+                showWelcomeMessage();
+                aiChatInput.focus();
+            }
+        }
+
+        function closeAiChat() {
+            aiChatWindow.classList.remove('active');
+            aiChatWindow.setAttribute('aria-hidden', 'true');
+        }
+
+        function handleSend() {
+            const text = aiChatInput.value.trim();
+            if (!text) return;
+
+            appendMessage(text, 'user');
+            aiChatInput.value = '';
+            sendAiMessage(text);
+        }
+
+        aiChatBtn.addEventListener('click', toggleAiChat);
+        aiChatClose.addEventListener('click', closeAiChat);
+        aiChatSend.addEventListener('click', handleSend);
+        aiChatInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+            }
+        });
+
+    </script>
+
+
+</body>
+
+</html>

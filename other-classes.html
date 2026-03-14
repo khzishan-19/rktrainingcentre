@@ -1,0 +1,1021 @@
+<!DOCTYPE html>
+<html lang="hi">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Other Classes - RK Training Centre™</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        :root {
+            --primary: #FF6B35; /* vibrant orange */
+            --secondary: #2563EB; /* bright blue */
+            --accent: #FFD700; /* yellow */
+            --light: #fef9f2; /* light warm */
+            --white: #ffffff;
+            --dark: #1f2a44; /* deep midnight text */
+            --gray: #667085;
+            --soft: #f7f8ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+            
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--light);
+            color: var(--dark);
+            overflow-x: hidden;
+        }
+
+        /* Loading screen */
+        #loadingOverlay {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            color: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            
+            z-index: 9999;
+            opacity: 1;
+            transition: opacity 0.8s ease;
+        }
+
+        #loadingOverlay.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-stage {
+            text-align: center;
+        }
+
+        .logo-assembler {
+            position: relative;
+            width: 280px;
+            height: 280px;
+        }
+
+        .logo-fragment {
+            position: absolute;
+            width: 25%;
+            height: 25%;
+            background-image: url('images/rktraningphoto.jpg');
+            background-size: 400% 400%;
+            opacity: 0;
+            transition: transform 0.7s cubic-bezier(0.22, 0.86, 0.42, 0.99), opacity 0.7s ease;
+        }
+
+        .logo-fragment.assembled {
+            opacity: 1;
+            transform: translate(0,0) scale(1);
+        }
+
+        .loader-text {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .loader-text.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .loader-text h1 {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            color: #1f2a44;
+            font-weight: 800;
+        }
+
+        .loader-text p {
+            font-size: 1rem;
+            color: #475569;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: linear-gradient(135deg, #FF6B35 0%, #2563EB 100%);
+            padding: 10px 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 6px 28px rgba(255, 107, 53, 0.35);
+            transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease, backdrop-filter 0.3s ease;
+            backdrop-filter: blur(6px);
+        }
+
+        header.header-hidden {
+            transform: translateY(-110%);
+        }
+
+        header.header-scrolled {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb) !important;
+            opacity: 1 !important;
+            backdrop-filter: none !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+            border-bottom: 1px solid rgba(37, 99, 235, 0.35);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .logo-text h1 {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+        .logo-text p {
+            color: rgba(255, 255, 255, 0.75);
+            font-size: 0.65rem;
+        }
+
+        .logo img {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        nav {
+            display: flex;
+            gap: 8px;
+        }
+
+        nav a {
+            color: rgba(255, 255, 255, 0.85);
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .hamburger-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            font-size: 1.6rem;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: #2563EB;
+            z-index: 1001;
+            flex-direction: column;
+        }
+
+        .mobile-menu.open {
+            display: flex;
+        }
+
+        .mobile-menu a,
+        .mobile-menu button {
+            color: #fff;
+            text-decoration: none;
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: left;
+            font-weight: 600;
+            width: 100%;
+            background: transparent;
+            border: none;
+        }
+
+        .mobile-menu a:hover,
+        .mobile-menu button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 12px 16px;
+            }
+
+            .logo img {
+                width: 40px;
+                height: 40px;
+                object-fit: cover;
+            }
+
+            .logo-text h1 {
+                font-size: 1rem;
+            }
+
+            .logo-text p {
+                display: none;
+            }
+
+            nav {
+                display: none;
+            }
+
+            .hamburger-btn {
+                display: block;
+            }
+        }
+
+        .login-btn {
+            color: white;
+            background: rgba(59, 130, 246, 0.85);
+            padding: 8px 18px;
+            border-radius: 30px;
+            border: none;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .login-btn:hover {
+            background: rgba(37, 99, 235, 0.95);
+        }
+
+        nav a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        /* ===== MODAL ===== */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 420px;
+            width: 90%;
+            padding: 24px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #f1f5f9;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .modal h2 {
+            margin-bottom: 18px;
+            color: #0f172a;
+        }
+
+        .modal button,
+        .modal input {
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .login-form input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 12px;
+            outline: none;
+            font-size: 0.95rem;
+        }
+
+        .login-form button {
+            width: 100%;
+            background: #2563eb;
+            border: none;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        /* ===== CONGRATULATIONS MODAL ===== */
+        .congrats-modal {
+            text-align: center;
+            padding: 40px 24px;
+        }
+
+        .congrats-modal .icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            animation: bounce 1s ease infinite;
+        }
+
+        .congrats-modal h2 {
+            font-size: 2rem;
+            color: #22c55e;
+            margin-bottom: 10px;
+        }
+
+        .congrats-modal p {
+            color: #4f5d77;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .congrats-modal .subtitle {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-bottom: 30px;
+        }
+
+        .congrats-modal .whatsapp-btn {
+            background: #25d366;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+
+        .congrats-modal .whatsapp-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+        }
+
+        .congrats-modal .close-btn {
+            background: #6b7280;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        /* Confetti Animation */
+        .confetti {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .confetti-piece {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background: #ffd700;
+            animation: fall 3s linear infinite;
+        }
+
+        .confetti-piece:nth-child(odd) {
+            background: #ff6b35;
+        }
+
+        .confetti-piece:nth-child(3n) {
+            background: #2563eb;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-100vh) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 70vh;
+            background: linear-gradient(135deg, #2563EB 0%, #1e40af 50%, #1e3a8a 100%);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 80px 24px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .hero h2 {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            animation: fadeUp 0.7s ease both;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 36px;
+            animation: fadeUp 0.7s 0.2s ease both;
+        }
+
+        /* ===== COURSES ===== */
+        .courses {
+            padding: 80px 48px;
+            background: linear-gradient(180deg, #fef9f2 0%, #f6f9ff 100%);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 56px;
+        }
+
+        .section-title .tag {
+            display: inline-block;
+            background: #dbeafe;
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: 700;
+            padding: 6px 18px;
+            border-radius: 30px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section-title h2 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: var(--dark);
+        }
+
+        .section-title h2 span {
+            color: var(--primary);
+        }
+
+        .section-title p {
+            color: var(--gray);
+            margin-top: 10px;
+            font-size: 1rem;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 28px;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            border-top: 6px solid #FF6B35;
+            border: 1px solid rgba(37, 99, 235, 0.24);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            transition: all 0.35s;
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            text-align: center;
+        }
+
+        .course-card:hover {
+            transform: translateY(-8px) rotateX(2deg);
+            box-shadow: 0 24px 50px rgba(37, 99, 235, 0.15);
+            border-color: #bfdbfe;
+        }
+
+        .course-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #dbeafe, #e0f2fe);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.15);
+        }
+
+        .course-card h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .course-card p {
+            color: var(--gray);
+            font-size: 0.9rem;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .subjects {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .subjects strong {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--dark);
+        }
+
+        .subjects ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .subjects li {
+            font-size: 0.85rem;
+            color: var(--gray);
+            margin-bottom: 4px;
+        }
+
+        .course-preview {
+            margin-bottom: 20px;
+        }
+
+        .preview-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 8px;
+            text-align: center;
+        }
+
+        .course-preview video {
+            width: 100%;
+            border-radius: 10px;
+            max-height: 200px;
+            object-fit: cover;
+        }
+
+        .enroll-btn {
+            background: linear-gradient(135deg, #FF6B35, #FF933C);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 1rem;
+            display: inline-block;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        .enroll-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.4);
+        }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .courses {
+                padding: 60px 24px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .hero h2 {
+                font-size: 2rem;
+            }
+
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .course-preview video {
+                max-height: 150px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="loadingOverlay">
+        <div class="loader-stage">
+            <div class="logo-assembler" id="logoAssembler"></div>
+            <div class="loader-text" id="loaderText">
+                <h1>RK Training Centre<sup style="font-size:0.6em; vertical-align: super; line-height: 0;">™</sup></h1>
+                <p>Other Classes</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- HEADER -->
+    <header>
+        <div class="logo">
+            <img src="images/rktraningphoto.jpg"
+                style="width:52px; height:52px; border-radius:12px; object-fit:cover;">
+            <div class="logo-text">
+                <h1>RK Training Centre<sup style="font-size:0.6em; vertical-align: super; line-height: 0;">™</sup></h1>
+                <p>Pandaul, Madhubani, Bihar • Est. 2010</p>
+            </div>
+        </div>
+        <nav>
+            <a href="index.html#courses">Courses</a>
+            <a href="index.html#skills">Skills</a>
+            <a href="index.html#about">About</a>
+            <a href="index.html#why">Why Us</a>
+            <a href="index.html#reviews">Reviews</a>
+            <a href="index.html#contact">Contact</a>
+            <a href="index.html#payment">Payment</a>
+            <a href="blog.html">Blog</a>
+            <a href="certification.html">Our Certification</a>
+            <a href="other-classes.html">Other Classes</a>
+            <button id="loginBtn" class="login-btn" type="button">Login</button>
+        </nav>
+        <button id="hamburgerBtn" class="hamburger-btn" aria-label="Toggle menu" type="button">☰</button>
+        <div id="mobileMenu" class="mobile-menu" aria-label="Mobile navigation menu">
+            <a href="index.html#courses">Courses</a>
+            <a href="index.html#skills">Skills</a>
+            <a href="index.html#about">About</a>
+            <a href="index.html#why">Why Us</a>
+            <a href="index.html#reviews">Reviews</a>
+            <a href="index.html#contact">Contact</a>
+            <a href="blog.html">Blog</a>
+            <a href="certification.html">Our Certification</a>
+            <a href="other-classes.html">Other Classes</a>
+            <button class="login-btn" type="button" id="mobileMenuLoginBtn">Login</button>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>Other Classes Available</h2>
+            <p>Expand Your Knowledge Beyond Computer Skills</p>
+        </div>
+    </section>
+
+    <!-- COURSES -->
+    <section class="courses">
+        <div class="section-title">
+            <div class="tag">🎓 Academic Excellence</div>
+            <h2>Degree <span>Courses</span></h2>
+            <p>Comprehensive guidance for academic success</p>
+        </div>
+        <div class="courses-grid">
+            <div class="course-card">
+                <div class="course-icon">🎓</div>
+                <h3>BA - Bachelor of Arts</h3>
+                <p>Complete guidance for BA students with personalized mentoring and study materials.</p>
+                <div class="subjects">
+                    <strong>Subjects Covered:</strong>
+                    <ul>
+                        <li>Hindi</li>
+                        <li>English</li>
+                        <li>History</li>
+                        <li>Political Science</li>
+                    </ul>
+                </div>
+                <button class="enroll-btn" onclick="openLoginModal()">Enroll Now</button>
+            </div>
+            <div class="course-card">
+                <div class="course-icon">💼</div>
+                <h3>BBA - Bachelor of Business Administration</h3>
+                <p>Business management and administration with practical industry insights.</p>
+                <div class="subjects">
+                    <strong>Subjects Covered:</strong>
+                    <ul>
+                        <li>Marketing</li>
+                        <li>Finance</li>
+                        <li>HR</li>
+                        <li>Operations</li>
+                    </ul>
+                </div>
+                <button class="enroll-btn" onclick="openLoginModal()">Enroll Now</button>
+            </div>
+            <div class="course-card">
+                <div class="course-icon">📊</div>
+                <h3>B.COM - Bachelor of Commerce</h3>
+                <p>Commerce and accounting fundamentals with real-world application focus.</p>
+                <div class="subjects">
+                    <strong>Subjects Covered:</strong>
+                    <ul>
+                        <li>Accounts</li>
+                        <li>Economics</li>
+                        <li>Business Law</li>
+                        <li>Tax</li>
+                    </ul>
+                </div>
+                <button class="enroll-btn" onclick="openLoginModal()">Enroll Now</button>
+            </div>
+            <div class="course-card">
+                <div class="course-icon">🏆</div>
+                <h3>MBA - Master of Business Administration</h3>
+                <p>Advanced business management with leadership and strategic thinking.</p>
+                <div class="subjects">
+                    <strong>Subjects Covered:</strong>
+                    <ul>
+                        <li>Strategy</li>
+                        <li>Leadership</li>
+                        <li>Finance</li>
+                        <li>Marketing</li>
+                    </ul>
+                </div>
+                <button class="enroll-btn" onclick="enrollMBA()">Enroll Now</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- LOGIN MODAL -->
+    <div id="loginModalOverlay" class="modal-overlay" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true" aria-labelledby="loginModalTitle">
+            <button type="button" class="modal-close" id="loginModalCloseBtn">×</button>
+            <h2 id="loginModalTitle">Login to Unlock Free Classes</h2>
+            <form class="login-form" id="loginForm">
+                <input type="email" placeholder="Enter your email" required>
+                <input type="tel" placeholder="Enter mobile number" required>
+                <button type="submit">Get Free Access</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- CONGRATULATIONS MODAL -->
+    <div id="congratsModalOverlay" class="modal-overlay" aria-hidden="true">
+        <div class="modal congrats-modal" role="dialog" aria-modal="true" aria-labelledby="congratsModalTitle">
+            <div class="confetti" id="confettiContainer"></div>
+            <div class="icon">🎉</div>
+            <h2 id="congratsModalTitle">Congratulations! 🎊</h2>
+            <p>You have successfully unlocked your 2 Day FREE Classes!</p>
+            <div class="subtitle">Our team will contact you within 24 hours</div>
+            <a href="https://wa.me/7838185640" class="whatsapp-btn" target="_blank">Contact on WhatsApp</a>
+            <button type="button" class="close-btn" id="congratsModalCloseBtn">Close</button>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('load', function () {
+            const loader = document.getElementById('loadingOverlay');
+            const assembler = document.getElementById('logoAssembler');
+            const loaderText = document.getElementById('loaderText');
+
+            const positions = [
+                { x: -320, y: -320 },
+                { x: window.innerWidth, y: -320 },
+                { x: -320, y: window.innerHeight },
+                { x: window.innerWidth, y: window.innerHeight },
+                { x: window.innerWidth * 0.5 - 140, y: -320 },
+                { x: window.innerWidth * 0.5 - 140, y: window.innerHeight },
+                { x: -320, y: window.innerHeight * 0.5 - 140 },
+                { x: window.innerWidth, y: window.innerHeight * 0.5 - 140 }
+            ];
+
+            for (let row = 0; row < 4; row++) {
+                for (let col = 0; col < 4; col++) {
+                    const fragment = document.createElement('div');
+                    fragment.className = 'logo-fragment';
+                    fragment.style.left = `${col * 25}%`;
+                    fragment.style.top = `${row * 25}%`;
+                    fragment.style.backgroundPosition = `${(col * -100) + '%'} ${(row * -100) + '%'} `;
+                    fragment.style.backgroundSize = '400% 400%';
+
+                    const start = positions[(row * 4 + col) % positions.length];
+                    const jitter = 40;
+                    const random = {
+                        x: start.x + (Math.random() * jitter - jitter / 2),
+                        y: start.y + (Math.random() * jitter - jitter / 2)
+                    };
+
+                    fragment.style.transform = `translate(${random.x}px, ${random.y}px) scale(0.75)`;
+                    assembler.appendChild(fragment);
+
+                    setTimeout(() => {
+                        fragment.classList.add('assembled');
+                        fragment.style.transform = 'translate(0px, 0px) scale(1)';
+                    }, 25);
+                }
+            }
+
+            setTimeout(() => {
+                loaderText.classList.add('visible');
+            }, 750);
+
+            setTimeout(() => {
+                loader.classList.add('hidden');
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 600);
+            }, 2500);
+        });
+
+        const loginBtn = document.getElementById('loginBtn');
+        const loginModalOverlay = document.getElementById('loginModalOverlay');
+        const loginModalCloseBtn = document.getElementById('loginModalCloseBtn');
+        const loginForm = document.getElementById('loginForm');
+        const congratsModalOverlay = document.getElementById('congratsModalOverlay');
+        const congratsModalCloseBtn = document.getElementById('congratsModalCloseBtn');
+        const confettiContainer = document.getElementById('confettiContainer');
+
+        function openLoginModal() {
+            loginModalOverlay.classList.add('active');
+            loginModalOverlay.setAttribute('aria-hidden', 'false');
+        }
+
+        function closeLoginModal() {
+            loginModalOverlay.classList.remove('active');
+            loginModalOverlay.setAttribute('aria-hidden', 'true');
+        }
+
+        function openCongratsModal() {
+            closeLoginModal();
+            congratsModalOverlay.classList.add('active');
+            congratsModalOverlay.setAttribute('aria-hidden', 'false');
+            createConfetti();
+        }
+
+        function closeCongratsModal() {
+            congratsModalOverlay.classList.remove('active');
+            congratsModalOverlay.setAttribute('aria-hidden', 'true');
+            confettiContainer.innerHTML = '';
+        }
+
+        function openMBACongratsModal() {
+            closeLoginModal();
+            // Modify modal content for MBA
+            const modal = document.querySelector('#congratsModalOverlay .modal');
+            modal.innerHTML = `
+                <div class="confetti" id="confettiContainer"></div>
+                <div class="icon">🎉</div>
+                <h2 id="congratsModalTitle">Congratulations!</h2>
+                <p>You have unlocked your 2 Day FREE Classes!</p>
+                <div class="subtitle">Click below to start watching</div>
+                <a href="mba-classes.html" class="whatsapp-btn">Start Learning Now</a>
+                <button type="button" class="close-btn" id="congratsModalCloseBtn">Close</button>
+            `;
+            congratsModalOverlay.classList.add('active');
+            congratsModalOverlay.setAttribute('aria-hidden', 'false');
+            createConfetti();
+        }
+
+        function enrollMBA() {
+            openLoginModal();
+            // Override the form submission for MBA
+            const loginForm = document.getElementById('loginForm');
+            loginForm.onsubmit = function(e) {
+                e.preventDefault();
+                openMBACongratsModal();
+            };
+        }
+
+        function createConfetti() {
+            for (let i = 0; i < 50; i++) {
+                const piece = document.createElement('div');
+                piece.className = 'confetti-piece';
+                piece.style.left = Math.random() * 100 + '%';
+                piece.style.animationDelay = Math.random() * 3 + 's';
+                piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                confettiContainer.appendChild(piece);
+            }
+        }
+
+        loginBtn.addEventListener('click', openLoginModal);
+        loginModalCloseBtn.addEventListener('click', closeLoginModal);
+        loginModalOverlay.addEventListener('click', function (e) {
+            if (e.target === loginModalOverlay) closeLoginModal();
+        });
+
+        loginForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            openCongratsModal();
+        });
+
+        congratsModalCloseBtn.addEventListener('click', closeCongratsModal);
+        congratsModalOverlay.addEventListener('click', function (e) {
+            if (e.target === congratsModalOverlay) closeCongratsModal();
+        });
+
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a, button');
+
+        hamburgerBtn.addEventListener('click', function () {
+            mobileMenu.classList.toggle('open');
+        });
+
+        mobileMenuLinks.forEach(function (link) {
+            link.addEventListener('click', function () {
+                mobileMenu.classList.remove('open');
+            });
+        });
+
+        // Header hide/show on mobile scroll
+        (function () {
+            const header = document.querySelector('header');
+            let lastScrollY = window.pageYOffset;
+            let ticking = false;
+
+            window.addEventListener('scroll', function () {
+                if (!ticking) {
+                    window.requestAnimationFrame(function () {
+                        const currentScrollY = window.pageYOffset;
+
+                        if (currentScrollY > lastScrollY && currentScrollY > 70) {
+                            header.classList.add('header-hidden');
+                        } else {
+                            header.classList.remove('header-hidden');
+                        }
+
+                        if (currentScrollY > 50) {
+                            header.classList.add('header-scrolled');
+                        } else {
+                            header.classList.remove('header-scrolled');
+                        }
+
+                        lastScrollY = currentScrollY;
+                        ticking = false;
+                    });
+                    ticking = true;
+                }
+            }, { passive: true });
+        })();
+    </script>
+</body>
+
+</html>

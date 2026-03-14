@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Our Accreditations & Certifications</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet" />
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --secondary: #2563EB;
+            --accent: #FFD700;
+            --light: #fef9f2;
+            --white: #ffffff;
+            --dark: #1f2a44;
+            --gray: #667085;
+            --soft: #f7f8ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body { font-family: 'Poppins', sans-serif; background: var(--light); color: var(--dark); overflow-x: hidden; }
+
+        header { background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); padding: 12px 32px; display: flex; align-items: center; justify-content: space-between; position: sticky; top:0; z-index: 100; }
+        .logo { display:flex; align-items:center; gap:12px; color:#fff; }
+        .logo img { width:42px; height:42px; border-radius:12px; object-fit:cover; }
+        .logo-text h1 { font-size:1.1rem; color:#fff; }
+        .logo-text p { color: rgba(255,255,255,0.75); font-size:0.75rem; }
+
+        nav { display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+        nav a { color:#fff; text-decoration:none; padding:6px 14px; border-radius:30px; font-weight:600; font-size:0.9rem; transition:transform .2s, background .2s; }
+        nav a:hover { transform: translateY(-2px); background: rgba(255,255,255,0.2); }
+
+        .btn-primary { background: linear-gradient(135deg, var(--primary), #FF933C); color:#fff; padding:12px 18px; border-radius: 999px; border:none; font-weight:700; box-shadow: 0 10px 24px rgba(255,107,53,.4); }
+
+        .main-content { padding: 72px 28px 60px; max-width: 1080px; margin: 0 auto; }
+        .section-title { text-align:center; margin-bottom: 30px; }
+        .section-title .tag { display:inline-block; font-weight:700; color:#2563EB; margin-bottom:8px; }
+        .section-title h1 { font-size:2rem; font-weight:800; margin-bottom: 8px; }
+        .section-title p { color: var(--gray); font-size:1.03rem; }
+
+        .certificate-wrap { background: #fff; border: 1px solid rgba(37,99,235,.2); border-radius: 18px; padding: 22px; box-shadow: 0 14px 28px rgba(37,99,235,.12); }
+        .certificate-title { margin-top: 14px; font-size: 1.4rem; font-weight: 700; color: #1f2a44; }
+        .certificate-meta { color: #2563EB; font-weight: 700; margin: 8px 0; }
+        .certificate-text { color: #4f5d77; line-height: 1.7; margin-bottom: 18px; }
+
+        .certificate-image-wrap { max-width: 720px; margin: 0 auto 20px; border: 5px solid var(--accent); border-radius: 14px; overflow:hidden; background: #fff; }
+        .certificate-image-wrap img { width: 100%; height: auto; display:block; object-fit:contain; cursor:pointer; }
+
+        .back-btn { display:inline-block; text-decoration:none; background: #2563EB; color:#fff; padding:10px 16px; border-radius: 999px; font-weight:600; box-shadow: 0 8px 20px rgba(37,99,235,0.3); }
+
+        .lightbox-overlay { position: fixed; inset: 0; background: rgba(11,17,40,0.88); display: none; align-items: center; justify-content: center; z-index: 10001; padding: 12px; }
+        .lightbox-overlay.active { display: flex; }
+        .lightbox-dialog { position: relative; max-width: 96vw; max-height: 94vh; border: 3px solid #FFD700; border-radius: 20px; overflow: hidden; background: #fff; }
+        .lightbox-dialog img { width: auto; height: 90vh; max-width: 90vw; display: block; object-fit: contain; }
+        .lightbox-close { position: absolute; top: 8px; right: 8px; width: 32px; height: 32px; border-radius:50%; border:none; background:#fff; color:#1f2a44; cursor:pointer; font-weight:800; }
+
+        @media (max-width: 900px) {
+            .main-content { padding: 60px 18px 40px; }
+            .section-title h1 { font-size: 1.7rem; }
+            .certificate-meta { font-size: 0.95rem; }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="images/rktraningphoto.jpg" alt="RK Training Centre" />
+            <div class="logo-text">
+                <h1>RK Training Centre</h1>
+                <p>Pandaul, Madhubani</p>
+            </div>
+        </div>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="index.html#courses">Courses</a>
+            <a href="index.html#skills">Skills</a>
+            <a href="index.html#about">About</a>
+            <a href="index.html#why">Why Us</a>
+            <a href="index.html#reviews">Reviews</a>
+            <a href="index.html#contact">Contact</a>
+            <a href="index.html#Our certification">Our Certification</a>
+        </nav>
+    </header>
+
+    <main class="main-content">
+        <section id="certification-section">
+            <div class="section-title">
+                <div class="tag">🏆 Our Accreditations</div>
+                <h1>Our Accreditations & Certifications</h1>
+                <p>Officially Recognized & Authorized Training Centre</p>
+            </div>
+
+            <div class="certificate-wrap">
+                <div class="certificate-image-wrap">
+                    <img id="certImage" src="images/tally-cert.jpg" alt="Tally Authorized Training Centre" />
+                </div>
+                <div class="certificate-title">Tally Authorized Training Centre</div>
+                <div class="certificate-meta">Issued by Tally Solutions Pvt. Ltd.</div>
+                <p class="certificate-text">This certificate demonstrates our official status as an authorized practical training provider for Tally solutions, ensuring best-in-class curriculum, assessment, and placement support for students.</p>
+                <a class="back-btn" href="index.html">← Back to Home</a>
+            </div>
+        </section>
+    </main>
+
+    <div class="lightbox-overlay" id="lightboxOverlay">
+        <div class="lightbox-dialog">
+            <button class="lightbox-close" id="lightboxClose">×</button>
+            <img id="lightboxImage" src="" alt="Certificate Fullscreen" />
+        </div>
+    </div>
+
+    <script>
+        const certImage = document.getElementById('certImage');
+        const lightboxOverlay = document.getElementById('lightboxOverlay');
+        const lightboxImage = document.getElementById('lightboxImage');
+        const lightboxClose = document.getElementById('lightboxClose');
+
+        certImage.addEventListener('click', function() {
+            lightboxImage.src = this.src;
+            lightboxOverlay.classList.add('active');
+        });
+
+        lightboxClose.addEventListener('click', function() {
+            lightboxOverlay.classList.remove('active');
+            lightboxImage.src = '';
+        });
+
+        lightboxOverlay.addEventListener('click', function(event) {
+            if (event.target === lightboxOverlay) {
+                lightboxOverlay.classList.remove('active');
+                lightboxImage.src = '';
+            }
+        });
+    </script>
+</body>
+</html>
